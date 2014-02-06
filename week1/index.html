@@ -1,0 +1,80 @@
+<html>
+
+	<head>
+
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400' rel='stylesheet' type='text/css'>
+
+		<title>READ THE MOST SHARED NY TIMES ARTICLE NOW</title>
+		
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script type="text/javascript">
+
+			function getNYTimesData() {
+				var nyTimesSearchURL = 'http://api.nytimes.com/svc/mostpopular/v2/mostshared/all-sections/1/?api-key=';
+				var myNYKey = '8F96C5E04F1C0F9BE47CAFD3BD00EA8D:16:57964809';
+
+				//API URL is:
+				// http://api.nytimes.com/svc/mostpopular/v2/mostshared/all-sections/1/?api-key=8F96C5E04F1C0F9BE47CAFD3BD00EA8D:16:57964809
+
+				$.ajax({
+					url: nyTimesSearchURL + myNYKey,
+					type: 'GET',
+					dataType: 'json',
+					error: function(data) {
+						console.log("We got problems");
+						console.log(data.status);
+					},
+					success: function(data){
+						console.log("WooHoo!");
+						console.log(data);
+					}
+				});
+			}
+
+			$(document).ready(function() {
+				"use strict";
+				getNYTimesData();
+			});
+
+		</script>
+
+		<style>
+
+			h1 {
+				font-family: 'Open Sans', sans-serif;
+				text-align: center;
+			}
+
+			#article {
+				font-family: 'Open Sans', sans-serif;
+				text-align: center;
+
+			}
+
+			#author {
+				font-family: 'Open Sans', sans-serif;
+				font-weight: 300;
+				font-style: italic;
+				text-align: center;
+
+			}
+
+			#thumbnail {
+				text-align: center;
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<h1>What's the most shared NY Times article today?</h1>
+		<div id="article">
+			<a href="http://www.nytimes.com/2014/02/06/sports/olympics/racing-to-save-dogs-roaming-around-sochi.html" target="_blank">
+				Racing to Save the Stray Dogs of Sochi
+			</a></div>
+		<div id="author">by David M. Herszenhorn</div>
+		<div id="thumbnail">
+			<a href="http://www.nytimes.com/2014/02/06/sports/olympics/racing-to-save-dogs-roaming-around-sochi.html" target="_blank"><img src="http://graphics8.nytimes.com/images/2014/02/06/sports/CITY-JP-DOGS/CITY-JP-DOGS-mediumThreeByTwo210.jpg"></a>
+	</body>
+
+</html>
