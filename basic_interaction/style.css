@@ -1,0 +1,27 @@
+.myChessBoardStyle {
+	font-size: 28px;
+	text-align: center;
+	color: red;
+}
+
+.myChessBoardStyle:hover {
+	color: black;
+	background-color: red;
+}
+
+#chessBoardButton {
+	width: 200px;
+	height: 50px;
+	line-height: 50px;
+	color: blue;
+	background-color: yellow;
+	text-align: center;
+	font-size: 24px;
+	border: 2px solid blue;
+}
+
+#chessBoardButton:hover {
+	background-color: blue;
+	color: yellow;
+	cursor: pointer;
+}
