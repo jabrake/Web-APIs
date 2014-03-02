@@ -4,20 +4,38 @@
 
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
+        <title>NY Times Cool Map</title>
+
         <link rel="stylesheet" type="text/css" href="style.css">
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v3&sensor=false"></script>
         <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+        <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 
     </head>
 
     <body>
 
-        <button class="categoryButton" id="art" value="Art">Art</button>
-        <button class="categoryButton" id="theater" value="Theater">Theater</button>
-        <button class="categoryButton" id="movies" value="Movies">Movies</button>
-        <button class="categoryButton" id="jazz" value="Jazz">Jazz</button>
-            
-        <div id="map-canvas"/>
+        <h1>Guys, there's cool events happening near you and the TIMES IS ON IT!</h1>
+
+        <ul class="categories">
+            <li id="catButtons"><div class="categoryButton" id="art" value="Art">Art</div></li>
+            <li id="catButtons"><div class="categoryButton" id="theater" value="Theater">Theater</div></li>
+            <li id="catButtons"><div class="categoryButton" id="movies" value="Movies">Movies</div></li>
+            <li id="catButtons"><div class="categoryButton" id="jazz" value="Jazz">Jazz</div></li>
+            <li id="catButtons"><div class="categoryButton" id="comedy" value="Comedy">Comedy</div></li>
+            <li id="catButtons"><div class="categoryButton" id="dance" value="Dance">Dance</div></li>
+            <li id="catButtons"><div class="categoryButton" id="classical" value="Classical">Classical</div></li>
+            <li id="catButtons"><div class="categoryButton" id="kids" value="forChildren">Kids</div></li>
+        </ul>
+
+        <ul class="radiusCategories">
+            <li id="radButtons"><div class="radiusButton" id="walk" value="800">I'd Rather Walk</div></li>
+            <li id="radButtons"><div class="radiusButton" id="train" value="2500">I'll Take the Train, I Guess</div></li>
+        </ul>
+
+        <div id="map-container">
+            <div id="map-canvas"/>
+        </div>
 
     </body>
 

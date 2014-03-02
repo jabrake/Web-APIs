@@ -4,9 +4,10 @@ var myLat, myLong, radius;
 var eventsArray = [];
 var markersArray = [];
 var infowindow = null;
+var defaultOff = false;
 
 var siberia = new google.maps.LatLng(60, 105);
-var newyork = new google.maps.LatLng(40.69847032728747, -73.9514422416687);
+var newyork = new google.maps.LatLng(40.729481987333855, -73.99361746883392);
 var browserSupportFlag = new Boolean();
 
 function nyTimesEvent(lat, lon, url, evname, desc) {
@@ -17,19 +18,18 @@ function nyTimesEvent(lat, lon, url, evname, desc) {
     this.desc = desc;
 }
 
-function getNYTimesData(categoryFilter) {
+function getNYTimesData(categoryFilter, radiusValue) {
 
     category = categoryFilter;
+    radius = radiusValue;
 
-    radius = 800;
-
-    var NYTimesURL = 'http://api.nytimes.com/svc/events/v2/listings.jsonp?&ll=' + myLat + ',' + myLong + '&radius=' + radius + '&filters=category:' + category + '&api-key=';
+    //var NYTimesURL = 'http://api.nytimes.com/svc/events/v2/listings.jsonp?&ll=' + myLat + ',' + myLong + '&radius=' + radius + '&filters=category:' + category + '&api-key=';
+    var NYTimesURL = 'http://api.nytimes.com/svc/events/v2/listings.jsonp?&ll=40.729481987333855,-73.99361746883392&radius=' + radius + '&filters=category:' + category + '&api-key=';
     var NYTimesKey = '80E7A1E53C3E2AF9768C755B5CC48307:13:57964809';
-
-    console.log(NYTimesURL+NYTimesKey);
+    var callback = '&callback=svc_search_v2_listings';
 
     $.ajax({
-        url: NYTimesURL + NYTimesKey,
+        url: NYTimesURL + NYTimesKey + callback,
         type: 'GET',
         dataType: 'jsonp',
         error: function(msg){
@@ -38,7 +38,7 @@ function getNYTimesData(categoryFilter) {
         success: function(data){
 
             var nyTimesEvents = data.results;
-            // console.log(nyTimesEvents);
+            eventsArray = [];
 
             for (var i = 0; i < nyTimesEvents.length; i++) {
                 var eventLat = nyTimesEvents[i].geocode_latitude;
@@ -81,7 +81,7 @@ function addMarkers(map, markers) {
         markersArray.push(eventMarker);
     }
 
-    //autoCenter();
+    autoCenter();
 }
 
 function setAllMap(map) {
@@ -107,8 +107,10 @@ function autoCenter() {
 
 function initializeMap() {
     var mapOptions = {
-        center: new google.maps.LatLng(40.729, -73.993),
-        zoom: 3,
+        // center: new google.maps.LatLng(40.729, -73.993),
+        // zoom: 3,
+        center: newyork,
+        zoom: 13,
         disableDefaultUI: true
     };
 
@@ -120,42 +122,42 @@ function initializeMap() {
 }
 
 // Try W3C Geolocation (Preferred)
-if(navigator.geolocation) {
+// if(navigator.geolocation) {
 
-    browserSupportFlag = true;
+//     browserSupportFlag = true;
 
-    navigator.geolocation.getCurrentPosition(function(position) {
+//     navigator.geolocation.getCurrentPosition(function(position) {
 
-        initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-        map.setCenter(initialLocation);
-        map.setZoom(15);
+//         initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+//         map.setCenter(initialLocation);
+//         map.setZoom(13);
 
-        myLat = initialLocation.d;
-        myLong = initialLocation.e;
-    },
+//         myLat = initialLocation.d;
+//         myLong = initialLocation.e;
+//     },
 
-    function() {
-        handleNoGeolocation(browserSupportFlag);
-    });
-}
+//     function() {
+//         handleNoGeolocation(browserSupportFlag);
+//     });
+// }
 
-// Browser doesn't support Geolocation
-else {
-    browserSupportFlag = false;
-    handleNoGeolocation(browserSupportFlag);
-}
+// // Browser doesn't support Geolocation
+// else {
+//     browserSupportFlag = false;
+//     handleNoGeolocation(browserSupportFlag);
+// }
 
-function handleNoGeolocation(errorFlag) {
-    if (errorFlag === true) {
-        alert("Geolocation service failed.");
-        initialLocation = newyork;
-    } else {
-        alert("Your browser doesn't support geolocation. We've placed you in Siberia.");
-        initialLocation = siberia;
-    }
+// function handleNoGeolocation(errorFlag) {
+//     if (errorFlag === true) {
+//         alert("Geolocation service failed.");
+//         initialLocation = newyork;
+//     } else {
+//         alert("Your browser doesn't support geolocation. We've placed you in Siberia.");
+//         initialLocation = siberia;
+//     }
 
-    map.setCenter(initialLocation);
-}
+//     map.setCenter(initialLocation);
+// }
 
 // google.maps.event.addDomListener(window, 'load', initializeMap);
 
@@ -164,10 +166,33 @@ $(document).ready(function() {
     initializeMap();
 
     $(".categoryButton").click(function() {
-        category = $(this).attr("value");
-        console.log(markersArray);
+        if (!defaultOff) {
+            category = $(this).attr("value");
+            radius = 800;
+            defaultOff = true;
+        }
+
+        else if (defaultOff) {
+            category = $(this).attr("value");
+        }
+
         deleteMarkers();
-        getNYTimesData(category);
+        getNYTimesData(category, radius);
+        console.log(defaultOff);
+    });
+
+    $(".radiusButton").click(function() {
+        radius = $(this).attr("value");
+        deleteMarkers();
+        getNYTimesData(category, radius);
+    });
+
+    $(".categories li").on('click', function() {
+        $(this).addClass("clicked").siblings().removeClass("clicked");
+    });
+
+    $(".radiusCategories li").on('click', function() {
+        $(this).addClass("clicked").siblings().removeClass("clicked");
     });
 
 });

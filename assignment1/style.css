@@ -1,5 +1,6 @@
 html { 
     height: 100%;
+    font-family: 'Lato', sans-serif;
 }
       
 body { 
@@ -9,6 +10,60 @@ body {
 }
       
 #map-canvas { 
-    height: 75%;
+    height: 85%;
     width: 100%;
+    display: block;
+}
+
+h1 {
+	text-align: center;
+	margin: 2%;
+}
+
+.categories, .radiusCategories {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+#catButtons {
+	float: left;
+	width: 12.5%;
+}
+
+.categoryButton {
+	padding-top: 10%;
+	height: 5%;
+	display: block;
+	text-align: center;
+	background-color: #D3D3D3;
+}
+
+.categoryButton:hover {
+	cursor: pointer;
+	background-color: white;
+}
+
+li.clicked {
+	font-weight: bold;
+	background-color: white;
+	font-size: 110%;
+}
+
+.radiusButton {
+	padding-top: 3%;
+	height: 5%;
+	display: block;
+	text-align: center;
+	background-color: rgba(59, 83, 35, 0.6);
+}
+
+.radiusButton:hover {
+	cursor: pointer;
+	background-color: white;
+}
+
+#radButtons {
+	float: left;
+	width: 50%;
 }
