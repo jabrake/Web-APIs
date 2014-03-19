@@ -23,8 +23,8 @@ function getNYTimesData(categoryFilter, radiusValue) {
     category = categoryFilter;
     radius = radiusValue;
 
-    //var NYTimesURL = 'http://api.nytimes.com/svc/events/v2/listings.jsonp?&ll=' + myLat + ',' + myLong + '&radius=' + radius + '&filters=category:' + category + '&api-key=';
-    var NYTimesURL = 'http://api.nytimes.com/svc/events/v2/listings.jsonp?&ll=40.729481987333855,-73.99361746883392&radius=' + radius + '&filters=category:' + category + '&api-key=';
+    var NYTimesURL = 'http://api.nytimes.com/svc/events/v2/listings.jsonp?&ll=' + myLat + ',' + myLong + '&radius=' + radius + '&filters=category:' + category + '&api-key=';
+    // var NYTimesURL = 'http://api.nytimes.com/svc/events/v2/listings.jsonp?&ll=40.729481987333855,-73.99361746883392&radius=' + radius + '&filters=category:' + category + '&api-key=';
     var NYTimesKey = '80E7A1E53C3E2AF9768C755B5CC48307:13:57964809';
     var callback = '&callback=svc_search_v2_listings';
 
@@ -37,25 +37,42 @@ function getNYTimesData(categoryFilter, radiusValue) {
         },
         success: function(data){
 
-            var nyTimesEvents = data.results;
-            eventsArray = [];
-
-            for (var i = 0; i < nyTimesEvents.length; i++) {
-                var eventLat = nyTimesEvents[i].geocode_latitude;
-                var eventLong = nyTimesEvents[i].geocode_longitude;
-                var eventURL = nyTimesEvents[i].event_detail_url;
-                var eventName = nyTimesEvents[i].event_name;
-                var eventDescription = nyTimesEvents[i].web_description;
-
-                var tempObject = new nyTimesEvent(eventLat, eventLong, eventURL, eventName, eventDescription);
-
-                eventsArray.push(tempObject);
+            if (data.results.length == 0) {
+                console.log("no results!");
+                alert("No results! Try a different category or distance.");
+                //noResultsNotice();
             }
 
-            addMarkers(map, eventsArray);
+            else {
+
+                var nyTimesEvents = data.results;
+                eventsArray = [];
+
+                for (var i = 0; i < nyTimesEvents.length; i++) {
+                    var eventLat = nyTimesEvents[i].geocode_latitude;
+                    var eventLong = nyTimesEvents[i].geocode_longitude;
+                    var eventURL = nyTimesEvents[i].event_detail_url;
+                    var eventName = nyTimesEvents[i].event_name;
+                    var eventDescription = nyTimesEvents[i].web_description;
+
+                    var tempObject = new nyTimesEvent(eventLat, eventLong, eventURL, eventName, eventDescription);
+
+                    eventsArray.push(tempObject);
+                }
+
+                addMarkers(map, eventsArray);
+            }
         }
     });
 }
+
+// function noResultsNotice() {
+//     var notice = document.createElement("div");
+//     notice.id = "notice";
+//     $("notice").html("No Results!");
+
+//     $("body").append(notice);
+// }
 
 function addMarkers(map, markers) {
     for (var i = 0; i < markers.length; i++) {
@@ -81,7 +98,7 @@ function addMarkers(map, markers) {
         markersArray.push(eventMarker);
     }
 
-    autoCenter();
+    //autoCenter();
 }
 
 function setAllMap(map) {
@@ -107,10 +124,10 @@ function autoCenter() {
 
 function initializeMap() {
     var mapOptions = {
-        // center: new google.maps.LatLng(40.729, -73.993),
-        // zoom: 3,
-        center: newyork,
-        zoom: 13,
+        center: new google.maps.LatLng(40.729, -73.993),
+        zoom: 3,
+        // center: newyork,
+        // zoom: 13,
         disableDefaultUI: true
     };
 
@@ -122,44 +139,42 @@ function initializeMap() {
 }
 
 // Try W3C Geolocation (Preferred)
-// if(navigator.geolocation) {
+if(navigator.geolocation) {
 
-//     browserSupportFlag = true;
+    browserSupportFlag = true;
 
-//     navigator.geolocation.getCurrentPosition(function(position) {
+    navigator.geolocation.getCurrentPosition(function(position) {
 
-//         initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-//         map.setCenter(initialLocation);
-//         map.setZoom(13);
+        initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+        map.setCenter(initialLocation);
+        map.setZoom(13);
 
-//         myLat = initialLocation.d;
-//         myLong = initialLocation.e;
-//     },
+        myLat = initialLocation.d;
+        myLong = initialLocation.e;
+    },
 
-//     function() {
-//         handleNoGeolocation(browserSupportFlag);
-//     });
-// }
+    function() {
+        handleNoGeolocation(browserSupportFlag);
+    });
+}
 
-// // Browser doesn't support Geolocation
-// else {
-//     browserSupportFlag = false;
-//     handleNoGeolocation(browserSupportFlag);
-// }
+// Browser doesn't support Geolocation
+else {
+    browserSupportFlag = false;
+    handleNoGeolocation(browserSupportFlag);
+}
 
-// function handleNoGeolocation(errorFlag) {
-//     if (errorFlag === true) {
-//         alert("Geolocation service failed.");
-//         initialLocation = newyork;
-//     } else {
-//         alert("Your browser doesn't support geolocation. We've placed you in Siberia.");
-//         initialLocation = siberia;
-//     }
+function handleNoGeolocation(errorFlag) {
+    if (errorFlag === true) {
+        alert("Geolocation service failed.");
+        initialLocation = newyork;
+    } else {
+        alert("Your browser doesn't support geolocation. We've placed you in Siberia.");
+        initialLocation = siberia;
+    }
 
-//     map.setCenter(initialLocation);
-// }
-
-// google.maps.event.addDomListener(window, 'load', initializeMap);
+    map.setCenter(initialLocation);
+}
 
 $(document).ready(function() {
 
@@ -178,7 +193,6 @@ $(document).ready(function() {
 
         deleteMarkers();
         getNYTimesData(category, radius);
-        console.log(defaultOff);
     });
 
     $(".radiusButton").click(function() {
@@ -187,12 +201,14 @@ $(document).ready(function() {
         getNYTimesData(category, radius);
     });
 
-    $(".categories li").on('click', function() {
-        $(this).addClass("clicked").siblings().removeClass("clicked");
+    $(".categories li").on('click', function(e) {
+        $(this).siblings().children().removeClass("clicked");
+        $(this).children().addClass("clicked");
     });
 
     $(".radiusCategories li").on('click', function() {
-        $(this).addClass("clicked").siblings().removeClass("clicked");
+        $(this).siblings().children().removeClass("clicked");
+        $(this).children().addClass("clicked");
     });
 
 });
