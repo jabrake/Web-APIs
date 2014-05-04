@@ -1,0 +1,18 @@
+@font-face {
+	font-family: 'ProximaNova';
+	src: url('ProximaNova-Light.otf');
+}
+
+body {
+	font-family: 'ProximaNova', Helvetica;
+}
+
+h1, h2, div {
+	font-family: 'ProximaNova', Helvetica;
+	font-weight: bold;
+}
+
+.circleText {
+	background-color: white;
+	font-family: 'ProximaNova', Helvetica;
+}

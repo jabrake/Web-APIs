@@ -1,0 +1,52 @@
+@font-face {
+	font-family: 'ProximaNova';
+	src: url('ProximaNova-Light.otf');
+}
+
+body {
+	font-family: 'ProximaNova', Helvetica;
+	background: #eee;
+}
+
+h1 {
+	position: absolute;
+	padding: 1%;
+	margin-left: 5%;
+	margin-right: 70%;
+	width: 49%;
+	font-size: 2em;
+	border: 2px solid;
+}
+
+#chart {
+	width: 49%;
+	margin-left: 48.5%;
+	position: absolute;
+}
+
+#infoDisplay {
+	position: absolute;
+	padding-left: 5%;
+	margin-top: 10%;
+	width: 49%;
+	font-size: 1em;
+	line-height: 200%;
+}
+
+#washLatLon {
+	position: absolute;
+	margin: 26% 0 0 70.5%;
+	font-size: 1em;
+	color: white;
+	z-index: 1;
+}
+
+#source {
+	position: absolute;
+	margin: 50% 0 0 5%;
+}
+
+.flag {
+	width: 50%;
+	height: 50%;
+}

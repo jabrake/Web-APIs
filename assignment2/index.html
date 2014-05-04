@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <link rel="stylesheet" type="text/css" href="main.css" />
+        <title>I've Been To A...</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+    </head>
+    <body>
+        <h1>I'VE BEEN TO A...</h1>
+        <h2>A visualization of my Foursquare check-in data</h2>
+        <div>I've downloaded my Foursquare check-in data, and parsed it to count the number of times I've visited different categories of venues. The largest circles are my most popular venues. Hover to explore, click to destroy.</div>
+        <canvas id="myCanvas" resize="true">YOUR BROWSER DOES NOT SUPPORT CANVAS???</canvas>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script charset="utf-8" type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
+        <script charset="utf-8" src="http://cdnjs.cloudflare.com/ajax/libs/paper.js/0.9.12/paper.js"></script>
+
+        <script src="script.js"></script>
+        <script type="text/paperscript" canvas="myCanvas" src="myPaperScript.js"></script>
+    </body>
+</html>
