@@ -7,6 +7,10 @@ var DCLon = -77.036492;
 var DCLatLon = new google.maps.LatLng(DCLat, DCLon);
 var droneData = [];
 var flag = null;
+var sortDistance = null;
+var initialLocation = undefined;
+var gotLocation = false;
+var myLat, myLong;
 
 function getDronestreamData() {
 
@@ -41,15 +45,18 @@ function calculateDistances() {
 
         var strikeLatLon = new google.maps.LatLng(strikeLat, strikeLon);
 
-        var calcDistance = google.maps.geometry.spherical.computeDistanceBetween(DCLatLon, strikeLatLon);
+        var calcDistance = google.maps.geometry.spherical.computeDistanceBetween(initialLocation, strikeLatLon);
 
         droneData[i].distance = calcDistance;
         droneData[i].hoverCounter = 0;
     }
 
-    var sortedDrones = _.sortBy(droneData, 'distance');
+    console.log(droneData);
 
-    console.log(sortedDrones);
+    var sortedDrones = _.sortBy(droneData, 'distance');
+      
+    var minDistance = sortedDrones[0].distance;
+    var maxDistance = sortedDrones[sortedDrones.length-1].distance;
 
     var adding = 0;
 
@@ -58,10 +65,10 @@ function calculateDistances() {
         .range([0, 2 * Math.PI]);
 
     var dataScale = d3.scale.linear()
-        .domain([11212867, 12588898])
+        .domain([minDistance, maxDistance])
         .range([50, 400]);
 
-    var vis = d3.select("body")
+     vis = d3.select("body")
         .append("svg")
         .attr('width', w)
         .attr('height', h)
@@ -74,7 +81,7 @@ function calculateDistances() {
         .attr("id", "circle");
 
     var circle = circleContainer.append("circle")
-        .attr("cx", w*1.47)
+        .attr("cx", w*1.6)
         .attr("cy", h/2)
         .attr("r", 49);
 
@@ -99,12 +106,34 @@ function calculateDistances() {
 
         $("#infoDisplay").html(function () {
 
-            var country = d.country;
-            var location = d.lat + "°, " + d.lon + "°";
-            var deaths = d.deaths;
-            var distance = Math.ceil(d.distance);
-            var display = "<h2>Distance: " + distance + " meters from strike command" + "<br>Location: " + location + "<br>Casualties: " + deaths + "</h2><br><img class='flag' src=" + flag + "></img>";
+            //Format latitude and longitude
+            var strikeLat = Number(d.lat);
+            var strikeLon = Number(d.lon);
+            var strikeLatShort = strikeLat.toPrecision(8);
+            var strikeLonShort = strikeLon.toPrecision(8);
+            var location = strikeLatShort + "°, " + strikeLonShort + "°";
 
+            //Number of deaths
+            var deaths = d.deaths;
+
+            if (deaths === "Unknown") {
+                deaths = "unknown";
+            }
+
+            //Format distance
+            var distance = Math.ceil(d.distance);
+            var distanceComma = Number(distance).toLocaleString('en');
+
+            //Date
+            var date = d.date;
+            var newDate = date.substr(0, 10).split("-");
+            var displayDate = newDate[1] + "/" + newDate[2] + "/" + newDate[0];
+
+            //Link
+            var link = d.bij_link;
+
+            //Determine country to dynamically select flag
+            // var country = d.country;
             if (d.country == "Pakistan") {
                 flag = "pakistan.png";
             } else if (d.country == "Somalia") {
@@ -113,9 +142,11 @@ function calculateDistances() {
                 flag = "yemen.png";
             }
 
-            console.log(flag);
+            //var display = "<h2>Distance: " + distanceComma + " meters from you" + "<br>Location: " + location + "<br>Casualties: " + deaths + "<br>Date: " + dateFormat + "</h2><br><img class='flag' src=" + flag + "></img>";
+            var display = "<h2>On " + displayDate + ", a drone struck a location in " + d.country + " that is " + distanceComma + " meters away from you. The number of casualties was " + deaths + ". <a target='_blank' href='" + link + "'>Read more.</a></h2><br><img class='flag' src=" + flag + "></img>";
 
             return display;
+
         }).hide().fadeIn("fast");
 
         d.hoverCounter++;
@@ -143,7 +174,64 @@ function calculateDistances() {
 
 }
 
+// sortDistance = function() {
+//     vis.selectAll("path")
+//         .sort(function(a, b) {
+//             return d.distance.ascending(a, b);
+//         })
+//         .transition()
+//         .duration(1000);
+// }
+
+//Get geolocation
+if(navigator.geolocation) {
+
+    browserSupportFlag = true;
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+
+        initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+        myLat = initialLocation.k;
+        myLong = initialLocation.A;
+
+        var myLatShort = myLat.toPrecision(8);
+        var myLongShort = myLong.toPrecision(8);
+
+        var myLocation = myLatShort + "°,<br>" + myLongShort + "°";
+
+        // $("#myLocation").html(myLocation);
+
+        gotLocation = true;
+
+        getDronestreamData();
+
+    },
+
+    function() {
+        handleNoGeolocation(browserSupportFlag);
+    });
+}
+
+//If browser doesn't support geolocation
+else {
+    browserSupportFlag = false;
+    handleNoGeolocation(browserSupportFlag);
+}
+
+function handleNoGeolocation(errorFlag) {
+    if (errorFlag === true) {
+        alert("Geolocation service failed.");
+    } else {
+        alert("Your browser doesn't support geolocation. We've placed you in Washington, D.C.");
+        initialLocation = DCLatLon;
+    }
+}
+
 $(document).ready(function() {
-    getDronestreamData();
+
+    // $("#sortDistance").on("click", function() {
+    //     sortDistance();
+    // });
 
 });
